@@ -1,0 +1,195 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=anikototv.to&sz=%size%",
+        "fileHash": "sha256-c919ace11c4deda484ebc9e09cfdca3572321c8c02fd656b51502d4707ff7eb4",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 35726,
+        "status": 3,
+        "language": "en",
+        "authors": [
+            "sevouz"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "OVA"
+        ],
+        "version": 1,
+        "internalName": "anikotoclone",
+        "description": "Watch Anime Online Free in HD (SUB/DUB)",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/anikotoclone.cs3",
+        "name": "anikotoclone"
+    },
+    {
+        "iconUrl": "https://animedekho.app/wp-content/uploads/2023/07/AnimeDekho-Logo-300x-1.png",
+        "fileHash": "sha256-674614769e354c7059a6f16101e7b903930d6fa844cfbf0e506581c8bc98ceb9",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 55723,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "Hindi Provider"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "Cartoon"
+        ],
+        "version": 62,
+        "internalName": "animedekhoclone",
+        "description": "Includes AnimeDekho,OnePace(DUB,SUB) and HindiSubAnime",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/animedekhoclone.cs3",
+        "name": "animedekhoclone"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/phisher98/TVVVV/refs/heads/main/Icons/animepahe.png",
+        "fileHash": "sha256-a209f46a9029f18e596e7d81bcfa9797d4f50bca8c95037076c75b6d5380e991",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 55852,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            "Cloudburst,Lorem Ipsum,Phisher98"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "OVA"
+        ],
+        "version": 20,
+        "internalName": "animepaheclone",
+        "description": "Animes (SUB/DUB)",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/animepaheclone.cs3",
+        "name": "animepaheclone"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=animesalt.ac&sz=%size%",
+        "fileHash": "sha256-00b58a9556dbe2a52b5383fca11b8b4b66aba29537c33e40cf540a89ee62cc8e",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 42337,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "Phisher98"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "Cartoon"
+        ],
+        "version": 7,
+        "internalName": "animesaltclone",
+        "description": "Anime/Cartoon in Hindi",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/animesaltclone.cs3",
+        "name": "animesaltclone"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/ycngmn/CuxPlug/refs/heads/main/icons/anizone.png",
+        "fileHash": "sha256-e343c2f35a41b82b4371c578f6482d76dde1b71b44bd6448b027c2aa4fd851d7",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 12304,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            "ycngmn"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 2,
+        "internalName": "anizoneclone",
+        "description": "Anizone.to streams latest anime content in multiple language.",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/anizoneclone.cs3",
+        "name": "anizoneclone"
+    },
+    {
+        "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/MovieBoxProviderIN/icon.png",
+        "fileHash": "sha256-186a61df68843319b813af7a7f23df98fa54e9bb56b9e948bb0310198aded9b6",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 71325,
+        "status": 1,
+        "language": "ta",
+        "authors": [
+            "NivinCNC"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 16,
+        "internalName": "movieboxinclone",
+        "description": "Multi Language Movies and Series Provider (Local homepage based on region)",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/movieboxinclone.cs3",
+        "name": "movieboxinclone"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/LikDev-256/likdev256-tamil-providers/master/MultiMoviesProvider/icon.png",
+        "fileHash": "sha256-c2ad06719bde35e103ab233c30a5436ecf494bf6d0476464ff7c0f8efa377d0d",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 47069,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "Phisher98"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "version": 48,
+        "internalName": "multimoviesclone",
+        "description": "Indian Multi-language HD Provider",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/multimoviesclone.cs3",
+        "name": "multimoviesclone"
+    },
+    {
+        "iconUrl": "https://github.com/sevouz/netclone/raw/refs/heads/master/netclone/icon.png",
+        "fileHash": "sha256-f11799308998789c77dd1f3cae0c6d1e0dda6d3f754e2a29d0ed458a131ade46",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 70702,
+        "status": 1,
+        "language": "ta",
+        "authors": [
+            "sevouz"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "netclone",
+        "description": "Netflix, PrimeVideo, Disney+ Hotstar Contents in Multiple Languages",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/netclone.cs3",
+        "name": "netclone"
+    },
+    {
+        "iconUrl": "https://raw.githubusercontent.com/Sushan64/NetMirror-Extension/refs/heads/master/Netmirror/logo.jpeg",
+        "fileHash": "sha256-c48c056d46a03a6135173953fff2a8f6f397cfa537c80e888801fa3ebb7e6fcf",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/sevouz/cloudstream-extensions-sevouz",
+        "fileSize": 53157,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "Sushan64"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 43,
+        "internalName": "netmirrorclone",
+        "description": "Netflix, PrimeVideo, Disney+ Hotstar Contents in Multiple Languages",
+        "url": "https://raw.githubusercontent.com/sevouz/cloudstream-extensions-sevouz/builds/netmirrorclone.cs3",
+        "name": "netmirrorclone"
+    }
+]

@@ -1,0 +1,9 @@
+{
+  "name": "ottclones",
+  "iconUrl": "https://raw.githubusercontent.com/sevouz/ottclones/master/icon.png",
+  "description": "OTT Clone Plugins for Cloudstream",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/sevouz/ottclones/builds/plugins.json"
+  ]
+}
