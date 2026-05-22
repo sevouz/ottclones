@@ -70,73 +70,74 @@ class Aniwatch : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
 
-        // Anime detail page: /anime/slug/
         val title = document.selectFirst("h2.film-name")?.text()?.trim()
             ?: document.selectFirst("h1")?.text()?.trim()
+            ?: document.selectFirst("meta[property=og:title]")?.attr("content")
+                ?.replace(Regex(" - Watch.*| \\| Aniwatch"), "")?.trim()
             ?: "Unknown"
 
         val poster = document.selectFirst("img.film-poster-img")?.attr("data-src")
             ?: document.selectFirst("img.film-poster-img")?.attr("src")
+            ?: document.selectFirst("meta[property=og:image]")?.attr("content")
 
         val description = document.selectFirst("div.film-description div.text")?.text()?.trim()
             ?: document.selectFirst("div.description")?.text()?.trim()
 
-        // Extract metadata
-        var year: Int? = null
-        var status: ShowStatus? = null
-        val tags = mutableListOf<String>()
+        // Extract genres
+        val tags = document.select("a[href*=/genre/]").map { it.text().trim() }
+            .filter { it.isNotBlank() && it.length < 30 }
+            .distinct()
 
-        document.select("div.anisc-info div.item, div.spe span").forEach { item ->
-            val text = item.text()
-            when {
-                text.contains("Aired:") || text.contains("Premiered:") -> {
-                    year = Regex("(\\d{4})").find(text)?.groupValues?.get(1)?.toIntOrNull()
+        // Get episodes from the watch page episode list (ss-list)
+        val subEpisodes = mutableListOf<Episode>()
+        val dubEpisodes = mutableListOf<Episode>()
+
+        // Episodes are on the episode/watch page, not the detail page
+        // The detail page has a "Watch now" link to the first episode
+        val watchNowLink = document.selectFirst("a[href*=episode]")?.attr("href")
+
+        if (watchNowLink != null) {
+            // Load the first episode page to get the full episode list
+            try {
+                val epPageDoc = app.get(fixUrl(watchNowLink)).document
+
+                // Parse episode list from ss-list
+                epPageDoc.select("div.ss-list a.ssl-item").forEach { epItem ->
+                    val epNum = epItem.attr("data-number").toIntOrNull() ?: return@forEach
+                    val epHref = epItem.attr("href").ifBlank { return@forEach }
+                    val epTitle = epItem.attr("title").ifBlank { "Episode $epNum" }
+
+                    subEpisodes.add(newEpisode(fixUrl(epHref)) {
+                        this.name = epTitle
+                        this.episode = epNum
+                    })
                 }
-                text.contains("Status:") -> {
-                    status = when {
-                        text.contains("Airing", true) -> ShowStatus.Ongoing
-                        text.contains("Finished", true) || text.contains("Completed", true) -> ShowStatus.Completed
-                        else -> null
+
+                // Check if dub servers exist on this page
+                val hasDub = epPageDoc.selectFirst("div.servers-dub") != null
+                if (hasDub) {
+                    // Add same episodes as dub
+                    subEpisodes.forEach { ep ->
+                        dubEpisodes.add(newEpisode("${ep.data}|dub") {
+                            this.name = ep.name
+                            this.episode = ep.episode
+                        })
                     }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load episode list: ${e.message}")
             }
-        }
-        document.select("div.genres a, a[href*=genre]").forEach {
-            val genre = it.text().trim()
-            if (genre.isNotBlank() && genre.length < 30) tags.add(genre)
-        }
-
-        // Get episodes - the detail page links to episode pages
-        // Episode URLs follow pattern: /slug-episode-N-english-sub/
-        val episodes = mutableListOf<Episode>()
-        document.select("ul.ep-range li a, div.ep-range a, a[href*=episode]").forEach { epLink ->
-            val epHref = epLink.attr("href")
-            if (epHref.contains("episode") && epHref.startsWith("http")) {
-                val epNum = Regex("episode-(\\d+)").find(epHref)?.groupValues?.get(1)?.toIntOrNull()
-                episodes.add(newEpisode(epHref) {
-                    this.name = "Episode $epNum"
-                    this.episode = epNum
-                })
-            }
-        }
-
-        // If no episodes found on detail page, this might be an episode page itself
-        if (episodes.isEmpty() && url.contains("episode")) {
-            val epNum = Regex("episode-(\\d+)").find(url)?.groupValues?.get(1)?.toIntOrNull()
-            episodes.add(newEpisode(url) {
-                this.name = "Episode $epNum"
-                this.episode = epNum
-            })
         }
 
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             engName = title
             this.posterUrl = poster
-            this.year = year
-            this.showStatus = status
             this.plot = description
-            this.tags = tags.distinct().ifEmpty { null }
-            addEpisodes(DubStatus.Subbed, episodes)
+            this.tags = tags.ifEmpty { null }
+            addEpisodes(DubStatus.Subbed, subEpisodes)
+            if (dubEpisodes.isNotEmpty()) {
+                addEpisodes(DubStatus.Dubbed, dubEpisodes)
+            }
         }
     }
 
@@ -146,20 +147,41 @@ class Aniwatch : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        // data is the episode page URL
-        val document = app.get(data).document
+        // data is episode URL, optionally with |dub suffix
+        val isDub = data.endsWith("|dub")
+        val episodeUrl = if (isDub) data.removeSuffix("|dub") else data
 
-        // Find all server items with data-hash (base64 encoded URLs)
-        document.select("div.server-item[data-hash]").forEach { server ->
+        val document = app.get(episodeUrl).document
+
+        // Determine which server block to use
+        val targetClass = if (isDub) "servers-dub" else "servers-sub"
+        var serverBlock = document.selectFirst("div.$targetClass")
+
+        // Fallback to any server block
+        if (serverBlock == null) {
+            serverBlock = document.selectFirst("div.player-servers")
+        }
+
+        // Find all server items with data-hash
+        val serverItems = serverBlock?.select("div.server-item[data-hash]")
+            ?: document.select("div.server-item[data-hash]")
+
+        serverItems.forEach { server ->
             val hash = server.attr("data-hash")
             val serverName = server.attr("data-server-name")
-            val serverType = server.attr("data-type") // sub or dub
+            val serverType = server.attr("data-type")
 
             if (hash.isBlank()) return@forEach
+
+            // Only process matching type
+            if (isDub && serverType != "dub") return@forEach
+            if (!isDub && serverType == "dub") return@forEach
 
             try {
                 val decoded = String(Base64.decode(hash, Base64.DEFAULT)).trim()
                 Log.d(TAG, "Server: $serverName ($serverType), Decoded: $decoded")
+
+                val typeSuffix = if (isDub) "DUB" else "SUB"
 
                 when {
                     // Direct MP4 player (my.1anime.site)
@@ -169,8 +191,8 @@ class Aniwatch : MainAPI() {
                             val mp4Url = "https://my.1anime.site/videos/$fileParam"
                             callback.invoke(
                                 newExtractorLink(
-                                    "Aniwatch $serverName [$serverType]",
-                                    "Aniwatch $serverName [$serverType]",
+                                    "Aniwatch $serverName [$typeSuffix]",
+                                    "Aniwatch $serverName [$typeSuffix]",
                                     mp4Url,
                                     ExtractorLinkType.VIDEO
                                 ) {
@@ -181,11 +203,11 @@ class Aniwatch : MainAPI() {
                         }
                     }
                     // MegaPlay-style streams (1anime.site/megaplay/stream/...)
-                    decoded.contains("1anime.site/megaplay") || decoded.contains("megaplay") -> {
+                    decoded.contains("megaplay") -> {
                         OneAnimeExtractor().getUrl(decoded, mainUrl, subtitleCallback, callback)
                     }
-                    // Vidup iframe
-                    decoded.contains("vidup.site") -> {
+                    // Vidup iframe (HTML with iframe tag)
+                    decoded.contains("<iframe") -> {
                         val iframeSrc = Regex("""src="([^"]+)"""").find(decoded)?.groupValues?.get(1)
                         if (iframeSrc != null) {
                             loadExtractor(iframeSrc, mainUrl, subtitleCallback, callback)
