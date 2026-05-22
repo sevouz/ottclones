@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
@@ -80,24 +79,19 @@ class MegaPlayExtractor : ExtractorApi() {
 
             Log.d(TAG, "Got m3u8: $m3u8")
 
-            // Use both approaches for compatibility with stable and pre-release
-            try {
-                M3u8Helper.generateM3u8(name, m3u8, mainUrl, headers = mainheaders).forEach(callback)
-            } catch (e: Exception) {
-                Log.d(TAG, "generateM3u8 failed, using direct link: ${e.message}")
-                callback.invoke(
-                    newExtractorLink(
-                        name,
-                        name,
-                        m3u8,
-                        ExtractorLinkType.M3U8
-                    ) {
-                        this.referer = "https://rapid-cloud.co/"
-                        this.quality = Qualities.Unknown.value
-                        this.headers = mainheaders
-                    }
-                )
-            }
+            // Provide direct M3U8 link - works on both stable and pre-release
+            callback.invoke(
+                newExtractorLink(
+                    name,
+                    name,
+                    m3u8,
+                    ExtractorLinkType.M3U8
+                ) {
+                    this.referer = "https://rapid-cloud.co/"
+                    this.quality = Qualities.Unknown.value
+                    this.headers = mainheaders
+                }
+            )
 
             response.tracks?.forEach { track ->
                 if (track.kind == "captions" || track.kind == "subtitles") {
@@ -138,22 +132,18 @@ class MegaPlayExtractor : ExtractorApi() {
         try {
             val fallbackM3u8 = app.get(url = url, referer = mainUrl, interceptor = m3u8Resolver).url
 
-            try {
-                M3u8Helper.generateM3u8(name, fallbackM3u8, mainUrl, headers = mainheaders).forEach(callback)
-            } catch (e: Exception) {
-                callback.invoke(
-                    newExtractorLink(
-                        name,
-                        name,
-                        fallbackM3u8,
-                        ExtractorLinkType.M3U8
-                    ) {
-                        this.referer = mainUrl
-                        this.quality = Qualities.Unknown.value
-                        this.headers = mainheaders
-                    }
-                )
-            }
+            callback.invoke(
+                newExtractorLink(
+                    name,
+                    name,
+                    fallbackM3u8,
+                    ExtractorLinkType.M3U8
+                ) {
+                    this.referer = mainUrl
+                    this.quality = Qualities.Unknown.value
+                    this.headers = mainheaders
+                }
+            )
         } catch (ex: Exception) {
             Log.e(TAG, "Fallback also failed: ${ex.message}")
         }
